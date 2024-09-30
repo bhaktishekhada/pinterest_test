@@ -1,6 +1,117 @@
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ user_form.as_p }}
+<!--<form method="POST" enctype="multipart/form-data">-->
+
+<!--    <div class="form-group">-->
+
+<!--        {% csrf_token %}-->
+<!--        {{ user_form.as_p }}-->
+<!--        <p>{{user_form.instance.profile_picture}}</p>-->
+<!--        &lt;!&ndash;        <p>{{user_form}}</p>&ndash;&gt;-->
+<!--        {% if user_form.instance.profile_picture %}-->
+<!--        <img src="{{ user_form.instance.profile_picture.url}}" height="300px" width="200px">-->
+<!--        {% endif %}-->
+<!--    </div>-->
+
+
+<!--    <button type="submit">Save changes</button>-->
+<!--    <button type="submit">back to login page</button>-->
+<!--</form>-->
+<!--<a href="{% url 'edit_profile' %}"></a>-->
+
+
+<!-- profile_edit.html -->
+{% comment %} <form method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        {% csrf_token %}
+        {{ user_form.as_p }}
+
+        <!-- Display the current profile picture -->
+        {% if user_form.instance.profile_picture %}
+        <p>Current Profile Picture:</p>
+        <img src="{{ user_form.instance.profile_picture.url }}" height="300px" width="200px" alt="Profile Picture">
+        {% else %}
+        <p>No profile picture uploaded yet.</p>
+        {% endif %}
+    </div>
+
     <button type="submit">Save changes</button>
-    <button type="submit">back to login page</button>
-</form>
+    <a href="{% url 'login' %}" class="btn btn-secondary">Back to Login Page</a>
+</form> {% endcomment %}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        form label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        form input, form textarea {
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        form button {
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Edit Profile</h1>
+        {% if user.profile_picture %}
+        <img src="{{user.profile_picture.url}}" alt="Not availabel" height="100px" width="100px">
+        {% else %}
+        <p>Picture is not set yet</p>
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Render form fields -->
+            {{ userprofile.as_p }}
+
+            <!-- Submit button -->
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+
+</body>
+</html>
