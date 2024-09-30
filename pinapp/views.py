@@ -51,22 +51,42 @@ def login_view(request):
     return render(request, "login.html")
 
 
+# @login_required
+# def edit_profile(request):
+#     try:
+#         user_profile = request.user.userprofile
+#     except UserProfile.DoesNotExist:
+#         user_profile = UserProfile.objects.create(user=request.user)
+#         form = UserProfileForm(instance=user_profile)
+#
+#         if request.method == "POST":
+#             form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+#             print(12333)
+#         if form.is_valid():
+#             form.save()
+#             print(56678)
+#             return redirect("profile")
+#     else:
+#         form = UserProfileForm(instance=user_profile)
+#
+#     return render(request, "edit_profile.html", {"form": form})
+
+
 @login_required
 def edit_profile(request):
-    try:
-        user_profile = request.user.userprofile
-    except UserProfile.DoesNotExist:
-        user_profile = UserProfile.objects.create(user=request.user)
-        form = UserProfileForm(instance=user_profile)
+    if request.method == "POST":
+        user_profile = UserProfile.objects.get_or_create(user=request.user)
 
-        if request.method == "POST":
-            form = UserProfileForm(
-                request.POST, request.FILES, instance=request.user.userprofile
-            )
-        if form.is_valid():
-            form.save()
-            return redirect("profile")
+        user_form = UserProfileForm(request.POST, instance=request.user.userprofile)
+
+        if user_form.is_valid():
+            user_form.save()
+
+            messages.success(request, "Your profile has been updated successfully!")
+            return redirect("edit_profile")
+
     else:
-        form = UserProfileForm(instance=request.user.userprofile)
+        user_profile = UserProfile.objects.get_or_create(user=request.user)
+        user_form = UserProfileForm(instance=request.user.userprofile)
 
-    return render(request, "edit_profile.html", {"form": form})
+        return render(request, "edit_profile.html", {"user_form": user_form})
