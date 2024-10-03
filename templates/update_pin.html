@@ -1,11 +1,10 @@
-
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Create New Pin</h2>
+  <h2>Update Pin</h2>
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Create Pin</button>
+    <button type="submit">Update Pin</button>
   </form>
 {% endblock %}

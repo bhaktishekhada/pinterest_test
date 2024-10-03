@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>{{ pin.title }}</h2>
+  <p>{{ pin.description }}</p>
+  <img src="{{ pin.image.url }}" alt="{{ pin.title }}">
+  <p>Created at: {{ pin.created_at }}</p>
+  <a href="{% url 'update_pin' pin.pk %}">Edit</a> |
+  <a href="{% url 'delete_pin' pin.pk %}">Delete</a>
+  <a href="{% url 'pin_detail' pin.pk %}">{{ pin.title }}</a>
+{% endblock %}

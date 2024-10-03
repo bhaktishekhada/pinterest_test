@@ -12,3 +12,18 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class Pin(models.Model):
+    user = models.ForeignKey(
+        UserProfile,
+        on_delete=models.CASCADE,
+    )
+    # board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="pins")
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to="pins/")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

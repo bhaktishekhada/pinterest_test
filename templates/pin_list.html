@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>All Pins</h2>
+  <ul>
+    {% for pin in pins %}
+      <li>
+        <a href="{% url 'pin_detail' pin.pk %}">{{ pin.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'create_pin' %}">Create New Pin</a>
+{% endblock %}

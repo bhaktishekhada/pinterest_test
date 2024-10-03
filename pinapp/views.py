@@ -3,11 +3,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-from .form import UserProfileForm
-from .models import UserProfile
+from .form import UserProfileForm, PinForm
+from .models import UserProfile, Pin
 
 
 def register(request):
@@ -90,3 +90,53 @@ def edit_profile(request):
         user_form = UserProfileForm(instance=request.user.userprofile)
 
         return render(request, "edit_profile.html", {"user_form": user_form})
+
+
+@login_required(login_url="login")
+def create_pin(request):
+    if request.method == "POST":
+
+        user_profile = UserProfile.objects.get_or_create(user=request.user)
+        form = PinForm(request.POST, request.FILES)
+        if form.is_valid():
+            pin = form.save(commit=False)
+            pin.user = request.user.userprofile
+            pin.save()
+            return redirect("pin_detail", pk=pin.pk)
+    else:
+        form = PinForm()
+    return render(request, "add_pin.html", {"form": form})
+
+
+@login_required(login_url="login")
+def update_pin(request, pk):
+    pin = get_object_or_404(Pin, pk=pk)
+    if request.method == "POST":
+        form = PinForm(request.POST, request.FILES, instance=pin)
+        if form.is_valid():
+            form.save()
+            return redirect("pin_detail", pk=pin.pk)
+    else:
+        form = PinForm(instance=pin)
+    return render(request, "update_pin.html", {"form": form})
+
+
+@login_required(login_url="login")
+def delete_pin(request, pk):
+    pin = get_object_or_404(Pin, pk=pk)
+    if request.method == "POST":
+        pin.delete()
+        return redirect("pin_list")
+    return render(request, "delete_pin.html", {"pin": pin})
+
+
+@login_required(login_url="login")
+def pin_detail(request, pk):
+    pin = get_object_or_404(Pin, pk=pk)
+    return render(request, "pin_detail.html", {"pin": pin})
+
+
+@login_required(login_url="login")
+def pin_list(request):
+    pins = Pin.objects.all()
+    return render(request, "pin_list.html", {"pins": pins})
