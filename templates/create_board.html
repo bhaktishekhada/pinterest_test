@@ -1,0 +1,8 @@
+
+<h1>Create a New Board</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create Board</button>
+</form>
+<a href="{% url 'user_profile_view' request.user.username %}">Back to Profile</a>

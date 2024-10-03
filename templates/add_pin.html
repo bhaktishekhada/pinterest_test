@@ -1,0 +1,8 @@
+
+<h1>Add a Pin to {{ board.title }}</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Pin</button>
+</form>
+<a href="{% url 'user_profile_view' request.user.username %}">Back to Profile</a>
