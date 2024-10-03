@@ -1,0 +1,34 @@
+<h1>{{ user_profile.user.username }}'s Profile</h1>
+<img src="{{ user_profile.profile_picture.url }}" alt="Profile Picture">
+<p>{{ user_profile.bio }}</p>
+
+<h3>Followers</h3>
+<ul>
+    {% for follower in followers %}
+        <li>{{ follower.user.username }}</li>
+    {% empty %}
+        <li>No followers yet.</li>
+    {% endfor %}
+</ul>
+
+<h3>Following</h3>
+<ul>
+    {% for followed_user in following %}
+        <li>{{ followed_user.user.username }}</li>
+    {% empty %}
+        <li>Not following anyone.</li>
+    {% endfor %}
+</ul>
+
+<!-- Follow/Unfollow Buttons -->
+{% if request.user.userprofile in following %}
+    <form action="{% url 'unfollow_user' user_profile.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Unfollow</button>
+    </form>
+{% else %}
+    <form action="{% url 'follow_user' user_profile.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Follow</button>
+    </form>
+{% endif %}
