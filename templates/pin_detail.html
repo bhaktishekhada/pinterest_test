@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>{{ pin.title }}</h2>
+<p>{{ pin.description }}</p>
+
+<img src="{{ pin.image.url }}" alt="{{ pin.title }}" style="max-height:300px">
+<p>Created at: {{ pin.created_at }}<a href="{% url 'home' %}">Home Page</a></p>
+{% if pin.user == request.user.userprofile %}
+<a href="{% url 'update_pin' pin.pk %}">Edit</a>
+<a href="{% url 'delete_pin' pin.pk %}">Delete</a>
+{% endif%}
+
+{% endblock %}
