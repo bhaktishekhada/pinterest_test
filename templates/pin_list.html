@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>All Pins</h2><br>
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger" role="alert">
+            A simple danger alert—check it out!
+        </div>
+        {% endfor %}
+        {% endif %}
+
+
+        <a href="{% url 'create_pin' %}">Create New Pin</a>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">No</th>
+            <th scope="col">Title</th>
+            <th scope="col">Description</th>
+            <th scope="col">User</th>
+            <th scope="col">Image</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for pin in pins %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ pin.title }}</td>
+            <td>{{ pin.description|truncatechars:10}}</td>
+            <td>{{ pin.user }}</td>
+            <td><img class="pin-img" src="{{ pin.image.url }}" alt="{{ pin.title }}" style="max-height:300px"></td>
+            <td>
+                <a href="{% url 'pin_detail' pin.pk %}">
+                    <button type="button" class="btn btn-primary">View</button>
+                </a>
+
+                <!-- Show Edit and Delete only if the current user owns the pin -->
+                {% if pin.user == request.user.userprofile %}
+                <a href="{% url 'edit_pin' pin.pk %}">
+                    <button type="button" class="btn btn-primary">Edit</button>
+                </a>
+
+                <a href="{% url 'delete_pin' pin.pk %}">
+                    <button type="button" class="btn btn-danger">Delete</button>
+                </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
