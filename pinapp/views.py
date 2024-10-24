@@ -3,6 +3,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
@@ -12,6 +14,21 @@ from .models import UserProfile, Pin
 
 def home(request):
     pins = Pin.objects.all()
+    # paginator = Paginator(pins, 3)
+    page = request.GET.get("page", 1)
+    if page == "1":
+        page_post = 5
+    else:
+        page_post = 3
+    paginator = Paginator(pins, page_post)
+
+    print("page", page)
+    try:
+        pins = paginator.page(page)
+    except PageNotAnInteger:
+        pins = paginator.page(1)
+    except EmptyPage:
+        pins = paginator.page(paginator.num_pages)
     return render(request, "pin_list.html", {"pins": pins})
 
 
@@ -68,6 +85,14 @@ def login_view(request):
 
 
 @login_required(login_url="login")
+def profile_view(request):
+    # Get the logged-in user's profile
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+
+    return render(request, "user_profile.html", {"user_profile": user_profile})
+
+
+@login_required(login_url="login")
 def edit_profile(request):
     if request.method == "POST":
         user_profile, created = UserProfile.objects.get_or_create(user=request.user)
@@ -99,9 +124,6 @@ def create_pin(request):
     else:
         form = PinForm()
     return render(request, "add_pin.html", {"form": form})
-
-
-from django.core.exceptions import PermissionDenied
 
 
 @login_required(login_url="login")
@@ -173,9 +195,26 @@ def pin_detail(request, pk):
     return render(request, "pin_detail.html", {"pin": pin})
 
 
-def pin_list(request):
-    pins = Pin.objects.all()
-    return render(request, "pin_detail.html", {"pins": pins})
+# def pin_list(request):
+#     pins = Pin.objects.all()
+#
+#     return render(request, "pin_list.html", {"pins": pins})
+
+
+# def pin_list(request):
+#     pin_list = Pin.objects.all()
+#     paginator = Paginator(pin_list, 10)  # Show 10 pins per page
+#     print(paginator.pin, 10)
+#     page_number = request.GET.get("page", 1)
+#     print(f"Current page number: {page_number}")
+#
+#     try:
+#         page_number = int(page_number)
+#     except ValueError:
+#         page_number = 1
+#     pins = paginator.get_page(page_number)
+#
+#     return render(request, "pin_list.html", {"pins": pins})
 
 
 @login_required(login_url="login")
