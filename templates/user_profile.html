@@ -1,19 +1,29 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
 {% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Profile Picture -->
+            {% if user_profile.profile_picture %}
+            <img src="{{ user_profile.profile_picture.url }}" alt="{{ user_profile.user.username }}'s Profile Picture"
+                 class="img-thumbnail" style="max-width: 100%;">
+            {% else %}
+            <img src="#" alt="Default Profile Picture" class="img-thumbnail"
+                 style="max-width: 100%;">
+            {% endif %}
+        </div>
 
-<!-- user_profile.html -->
-<h1>{{ profile.user.username }}'s Profile</h1>
-<img src="{{ profile.profile_picture.url }}" alt="Profile Picture" width="150">
-<p>{{ profile.bio }}</p>
+        <div class="col-md-8">
+            <!-- Username and Bio -->
+            <h2>{{ user_profile.user.username }}</h2>
+            <p><strong>Bio:</strong> {{ user_profile.bio }}</p>
 
-<h2>Boards</h2>
-<ul>
-    {% for board in boards %}
-    <li>
-        <a href="{% url 'add_pin' board.id %}">{{ board.title }}</a>
-        <p>{{ board.description }}</p>
-    </li>
-    {% endfor %}
-</ul>
-<a href="{% url 'create_board' %}">Create New Board</a>
-{% endblock content %}
+            <!-- Edit Profile Button -->
+            {% if user_profile.user == request.user %}
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

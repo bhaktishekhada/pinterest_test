@@ -1,19 +1,37 @@
 {% extends 'base.html' %}
-
 {% block content %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<style>
+    .alert {
+        transition: opacity 0.5s linear;
+    }
+    .fade-out {
+        opacity: 0;
+    }
+</style>
+
 <div class="container">
     <div class="d-flex justify-content-between align-items-center">
         <h2>All Pins</h2><br>
+
+        <!-- Display messages with a success alert -->
         {% if messages %}
         {% for message in messages %}
-        <div class="alert alert-danger" role="alert">
-            A simple danger alert—check it out!
+        <div class="alert alert-success alert-dismissible fade show" role="alert" id="auto-close-alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
+
         {% endfor %}
         {% endif %}
-
-
+        <!-- Ensure the create pin link is shown only if the user is logged in -->
+        {% if user.is_authenticated %}
         <a href="{% url 'create_pin' %}">Create New Pin</a>
+
+        {% endif %}
     </div>
 
     <table class="table table-bordered table-hover">
@@ -32,7 +50,7 @@
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ pin.title }}</td>
-            <td>{{ pin.description|truncatechars:10}}</td>
+            <td>{{ pin.description|truncatechars:10 }}</td>
             <td>{{ pin.user }}</td>
             <td><img class="pin-img" src="{{ pin.image.url }}" alt="{{ pin.title }}" style="max-height:300px"></td>
             <td>
@@ -55,6 +73,52 @@
         {% endfor %}
         </tbody>
     </table>
+    <!--    <div>-->
+    <!--  <span>-->
+    <!--    {% if pins.has_previous %}-->
+    <!--      <a href="?page={{ pins.previous_page_number }}">Previous</a>-->
+    <!--    {% endif %}-->
+    <!--    <span>-->
+    <!--      Page {{ pins.number }} of {{ pins.paginator.num_pages }}.-->
+    <!--    </span>-->
+    <!--    {% if pins.has_next %}-->
+    <!--      <a href="?page={{ pins.next_page_number }}">Next</a>-->
+    <!--    {% endif %}-->
+    <!--  </span>-->
+    <!--    </div>-->
+
+    <!-- Pagination links -->
+    <div class="pagination">
+
+
+        <ul class="pagination">
+            {% if pins.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ pins.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">Page {{ pins.number }} of {{ pins.paginator.num_pages }}</span>
+            </li>
+
+            {% if pins.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ pins.next_page_number }}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ pins.paginator.num_pages }}">Last &raquo;</a>
+            </li>
+            {% endif %}
+        </ul>
+
+    </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- JavaScript to make messages disappear after 5 seconds -->
+
+<script>
+    setTimeout(function() {
+        document.getElementById("auto-close-alert").classList.add("fade-out");
+    }, 5000);
+</script>
 {% endblock %}
